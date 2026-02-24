@@ -59,42 +59,55 @@
 </head>
 <body>
 
-    <!-- Main Menu -->
+    <!-- Screen 1: Main Menu -->
     <div id="menu-screen" class="screen active">
         <h1>Click. The. Button.</h1>
         <button class="play-btn" onclick="showScreen('game-screen')">Play</button>
     </div>
 
-    <!-- The Red Button -->
+    <!-- Screen 2: The Red Button -->
     <div id="game-screen" class="screen">
         <h1>Don't be shy...</h1>
         <button class="red-btn" onclick="startCountdown()">CLICK ME</button>
     </div>
 
-    <!-- End Screen -->
+    <!-- Screen 3: Nice Computer! -->
     <div id="end-screen" class="screen">
         <h1>Nice Computer!</h1>
         <div id="timer">5</div>
     </div>
 
     <script>
-        // High-pitched buzzer sound
-        const prankSound = new Audio('https://www.soundjay.com');
+        // Use the Web Audio API to create a sound without needing a file
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function beep(duration, frequency, volume) {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = "sawtooth"; // Makes it sound more like a "glitchy" alarm
+            oscillator.frequency.value = frequency;
+            gainNode.gain.value = volume;
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), duration);
+        }
 
         function showScreen(screenId) {
-            // "Unlock" audio on the first click
-            prankSound.play().then(() => {
-                prankSound.pause();
-                prankSound.currentTime = 0;
-            }).catch(e => console.log("Waiting for user interaction..."));
-
+            // Chrome requires us to resume the audio context after a user click
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
         function onCountdownFinished() {
-            prankSound.play();
-            console.log("Countdown finished!");
+            // Prank sound: High-pitched 1-second beep
+            beep(1000, 880, 0.1); 
         }
 
         function startCountdown() {
