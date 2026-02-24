@@ -22,9 +22,7 @@
             align-items: center;
         }
 
-        .active {
-            display: flex;
-        }
+        .active { display: flex; }
 
         h1 { font-size: 3rem; color: #333; }
 
@@ -80,16 +78,21 @@
     </div>
 
     <script>
-        // Placeholder sound - Replace this URL with your own sound file if needed
+        // High-pitched buzzer sound
         const prankSound = new Audio('https://www.soundjay.com');
 
         function showScreen(screenId) {
+            // "Unlock" audio on the first click
+            prankSound.play().then(() => {
+                prankSound.pause();
+                prankSound.currentTime = 0;
+            }).catch(e => console.log("Waiting for user interaction..."));
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
         function onCountdownFinished() {
-            // Play the sound when the timer hits zero
             prankSound.play();
             console.log("Countdown finished!");
         }
