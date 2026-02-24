@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click. The. Button.</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            text-align: center;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .active { display: flex; }
+
+        h1 { font-size: 3rem; color: #333; }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.1s;
+        }
+
+        .play-btn { background-color: #4CAF50; color: white; }
+        
+        .red-btn {
+            background-color: #ff4d4d;
+            color: white;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 8px #991f1f;
+        }
+
+        .red-btn:active {
+            box-shadow: 0 2px #991f1f;
+            transform: translateY(4px);
+        }
+
+        #timer { font-size: 5rem; color: #ff4d4d; font-weight: bold; }
+
+        /* Harmless Prank Effect: Screen Shake */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(3px, 2px) rotate(-1deg); }
+            60% { transform: translate(-1px, -1px) rotate(1deg); }
+            80% { transform: translate(-3px, 1px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .glitch {
+            animation: shake 0.1s infinite;
+            background-color: #7a0000 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Menu -->
+    <div id="menu-screen" class="screen active">
+        <h1>Click. The. Button.</h1>
+        <button class="play-btn" onclick="showScreen('game-screen')">Play</button>
+    </div>
+
+    <!-- The Red Button -->
+    <div id="game-screen" class="screen">
+        <h1>Don't be shy...</h1>
+        <button class="red-btn" onclick="startCountdown()">CLICK ME</button>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div id="end-screen" class="screen">
+        <h1 id="end-text">Nice Computer!</h1>
+        <div id="timer">5</div>
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function onCountdownFinished() {
+            // Apply the harmless visual "glitch" prank
+            document.body.classList.add('glitch');
+            document.getElementById('end-text').innerText = "SYSTEM ERROR";
+            document.getElementById('timer').innerText = "⚠";
+        }
+
+        function startCountdown() {
+            showScreen('end-screen');
+            let timeLeft = 5;
+            const timerDisplay = document.getElementById('timer');
+
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    onCountdownFinished();
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
